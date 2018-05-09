@@ -6,6 +6,6 @@ Using Machine Learning to predict the winner of a random pokemon battle.
 * combats.csv contains info about battles and there winners.
 * tests.csv contains the battles for which winners need to be predicted.
 * Used a RandomForestClassifier with 100 estimators
-* Accuracy on Training data was 95 %.
+* Accuracy on Test set is 95 %.
 
 An article on it is in process. 
