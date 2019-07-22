@@ -19,21 +19,24 @@ combats.Winner[combats.Winner == combats.First_pokemon] = 0
 combats.Winner[combats.Winner == combats.Second_pokemon] = 1
 
 #Taking diff between pokemon stats and normalizing the data
-def normalization(data_df):
-    stats=["Hit Points","Attack","Defense","Sp. Atk","Sp. Def","Speed","Legendary"]
-    stats_df=pokemon[stats].T.to_dict("list")
-    one=data_df.First_pokemon.map(stats_df)
-    two=data_df.Second_pokemon.map(stats_df)
-    temp_list=[]
-    for i in range(len(one)):
-        temp_list.append(np.array(one[i])-np.array(two[i]))
-    new_test = pd.DataFrame(temp_list, columns=stats)
-    for c in stats:
-        description=new_test[c].describe()
-        new_test[c]=(new_test[c]-description['min'])/(description['max']-description['min'])
-    return new_test
+#Using preprocessing from sklearn to do the normalization and having clearer codes
+from sklearn import preprocessing
 
-data=normalization(combats)
+def normalization(data_df):
+    stats = ["Hit Points","Attack","Defense","Sp. Atk","Sp. Def","Speed","Legendary"]
+    stats_df = pokemon[stats].T.to_dict("list")
+    one = data_df.First_pokemon.map(stats_df)
+    two = data_df.Second_pokemon.map(stats_df)
+    temp_list = []
+    
+    for i in range(len(one)):
+        temp_list.append(np.array(one[i]) - np.array(two[i]))
+    
+    new_test = pd.DataFrame(temp_list, columns=stats)
+    
+    return pd.DataFrame.from_records(preprocessing.scale(new_test))
+
+data = normalization(combats)
 data = pd.concat([data,combats.Winner], axis=1)
 
 x_label=data.drop("Winner",axis=1) #inputs
@@ -63,4 +66,3 @@ test_data["Winner"]=[test_data["First_pokemon"][i] if pred[i]==0 else test_data[
 
 combats_name = test_data[cols].replace(pokemon.Name)
 combats_name[63:64]
-
